@@ -8,9 +8,11 @@
 
 import UIKit
 
+
+
 class DataViewController: UIViewController {
     
-    public var remimder: Reminder?
+    public var reminder: Reminder?
     
     
     @IBOutlet weak var txtEvent: UITextField!
@@ -22,41 +24,41 @@ class DataViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.txtEvent.text = self.remimder?.texto
-        self.dateEvent.date =  self.remimder?.date ?? Date()
+        
+        self.txtEvent.text = self.reminder?.texto
+        self.dateEvent.date =  self.reminder?.date ?? Date()
         self.navigationItem.hidesBackButton = true
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.editButtonPressed))
-        
-        
-        // Do any additional setup after loading the view.
     }
     
     
     @objc func editButtonPressed(){
-        self.remimder?.date = self.dateEvent.date
-        self.remimder?.texto = self.txtEvent.text!
-        self.remimder?.isNotification =  self.isNotification.isOn
+        self.reminder?.date = self.dateEvent.date
+        self.reminder?.texto = self.txtEvent.text!
+        self.reminder?.isNotification =  self.isNotification.isOn
         let controller =  (self.navigationController?.viewControllers[0] as! TableViewController)
-        controller.selectedItem = self.remimder
+        controller.selectedItem = self.reminder
         
-        if self.remimder?.texto == ""{
+        if self.reminder?.texto == ""{
             let alert = UIAlertController(title: "Alerta", message: "Campo Evento Obrigatório", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
             self.present(alert, animated: true, completion: nil)
         } else {
-             self.navigationController?.popViewController(animated: true)
+            if (self.reminder?.isNotification)! {
+                controller.Notification((self.reminder?.texto)!, self.reminder?.date)
+            }
+            self.navigationController?.popViewController(animated: true)
         }
         
-       
+        
     }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
+}
    
     
+    // MARK: - Private Methods
     
-}
+    
+
+
+

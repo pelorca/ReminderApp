@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1DB0C3CB1FD1F3790054D111 /* DataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DB0C3CA1FD1F3790054D111 /* DataViewController.swift */; };
 		1DB0C3CD1FD20F950054D111 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DB0C3CC1FD20F950054D111 /* Extension.swift */; };
+		1DBD092F1FD23EEF00DC1D0C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DBD092E1FD23EEF00DC1D0C /* ViewController.swift */; };
 		1DCB6A651FD1BC980017E190 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DCB6A641FD1BC980017E190 /* AppDelegate.swift */; };
 		1DCB6A6A1FD1BC980017E190 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1DCB6A681FD1BC980017E190 /* Main.storyboard */; };
 		1DCB6A6C1FD1BC980017E190 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DCB6A6B1FD1BC980017E190 /* Assets.xcassets */; };
@@ -21,6 +22,7 @@
 /* Begin PBXFileReference section */
 		1DB0C3CA1FD1F3790054D111 /* DataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataViewController.swift; sourceTree = "<group>"; };
 		1DB0C3CC1FD20F950054D111 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		1DBD092E1FD23EEF00DC1D0C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		1DCB6A611FD1BC980017E190 /* ReminderApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReminderApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DCB6A641FD1BC980017E190 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1DCB6A691FD1BC980017E190 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 				1DCB6A7B1FD1BF730017E190 /* Reminder.swift */,
 				1DB0C3CA1FD1F3790054D111 /* DataViewController.swift */,
 				1DB0C3CC1FD20F950054D111 /* Extension.swift */,
+				1DBD092E1FD23EEF00DC1D0C /* ViewController.swift */,
 			);
 			path = ReminderApp;
 			sourceTree = "<group>";
@@ -117,6 +120,11 @@
 					1DCB6A601FD1BC980017E190 = {
 						CreatedOnToolsVersion = 9.1;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 0;
+							};
+						};
 					};
 				};
 			};
@@ -160,6 +168,7 @@
 				1DCB6A7A1FD1BD690017E190 /* TableViewCell.swift in Sources */,
 				1DCB6A781FD1BD5A0017E190 /* TableViewController.swift in Sources */,
 				1DB0C3CD1FD20F950054D111 /* Extension.swift in Sources */,
+				1DBD092F1FD23EEF00DC1D0C /* ViewController.swift in Sources */,
 				1DCB6A651FD1BC980017E190 /* AppDelegate.swift in Sources */,
 				1DCB6A7C1FD1BF730017E190 /* Reminder.swift in Sources */,
 			);

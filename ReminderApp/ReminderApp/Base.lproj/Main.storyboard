@@ -28,7 +28,7 @@
                             </connections>
                         </searchBar>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" editingAccessoryType="detailButton" focusStyle="custom" rowHeight="77" id="KQ3-5V-9P6" customClass="TableViewCell" customModule="ReminderApp" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="cell" editingAccessoryType="detailButton" focusStyle="custom" rowHeight="77" id="KQ3-5V-9P6" customClass="TableViewCell" customModule="ReminderApp" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="72" width="375" height="77"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="KQ3-5V-9P6" id="Euw-T7-QDA" customClass="TableViewCell" customModule="ReminderApp" customModuleProvider="target">
@@ -166,6 +166,33 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Jc8-2s-vmr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-776" y="-10"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="8re-i8-BlZ">
+            <objects>
+                <viewController id="uJh-kF-8ag" customClass="ViewController" customModule="ReminderApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="UPP-hp-PQc">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="G7f-sV-cL5">
+                                <rect key="frame" x="164" y="318" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="btnButton:" destination="mWi-A2-FcK" eventType="touchUpInside" id="ovz-P2-aLN"/>
+                                    <action selector="didTapButtonWithSender:" destination="uJh-kF-8ag" eventType="touchUpInside" id="ye9-n5-igq"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="kbP-Fl-7Ym"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Occ-cJ-a0Z" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="mWi-A2-FcK" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="-1054" y="1026"/>
         </scene>
     </scenes>
     <resources>

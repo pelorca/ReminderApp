@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 class TableViewController: UITableViewController, UITextFieldDelegate, UISearchBarDelegate {
     
@@ -25,7 +26,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
         self.clearsSelectionOnViewWillAppear = false
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.editButtonPressed))
         tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.hideKeyboard))
-        
+        UNUserNotificationCenter.current().delegate = self
     }
     
     
@@ -42,7 +43,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "viewDetails"{
             let page: DataViewController = segue.destination as! DataViewController
-            page.remimder = (sender as! Reminder)
+            page.reminder = (sender as! Reminder)
             
         }
     }
@@ -57,18 +58,14 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+      
     }
     
-    // MARK: - Table view data source
-    
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 1
+       return 1
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return listReminder.count
     }
     
@@ -78,18 +75,19 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            
-            if listReminder.count == 1 {
+            let text = listReminder[indexPath.row].texto
+             listReminderOriginal = listReminderOriginal.filter{ $0.texto != text}
+            if listReminderOriginal.count == 1 {
                 self.listReminder.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
                 self.listReminder.append(Reminder())
+                 tableView.reloadData()
                 listReminderOriginal = listReminder
-                tableView.reloadData()
             } else {
                 self.listReminder.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
-                listReminderOriginal = listReminder
             }
+            
         }
     }
     
@@ -165,22 +163,86 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
         self.tableView.removeGestureRecognizer(tapGesture as! UIGestureRecognizer)
         self.tableView.reloadData()
     }
-    //delegate method
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {           textField.resignFirstResponder()
         return true
     }
     
     override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        let filtered = listReminderOriginal.filter{ $0.date == nil && $0.texto == ""}
-        if filtered.count == 1 {
+        let filtered = listReminder.filter{ $0.date == nil && $0.texto == ""}
+        if filtered.count == 1 && listReminder.count == 1 {
             listReminder.append(Reminder())
             self.selectedItem = listReminder[listReminder.count - 1]
             
         } else {
             self.selectedItem = listReminder[indexPath.row]
         }
-        
         self.performSegue(withIdentifier: "viewDetails",  sender: selectedItem)
+    }
+    
+   public func Notification(_ text: String, _ date: Date?) {
+        
+        UNUserNotificationCenter.current().getNotificationSettings { (notificationSettings) in
+            switch notificationSettings.authorizationStatus {
+            case .notDetermined:
+                self.requestAuthorization(completionHandler: { (success) in
+                    guard success else { return }
+                    self.scheduleLocalNotification(text, date!)
+                })
+            case .authorized:
+                self.scheduleLocalNotification(text, date!)
+            case .denied:
+                print("Application Not Allowed to Display Notifications")
+            }
+        }
+        
+    }
+    
+    private func requestAuthorization(completionHandler: @escaping (_ success: Bool) -> ()) {
+        // Request Authorization
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (success, error) in
+            if let error = error {
+                print("Request Authorization Failed (\(error), \(error.localizedDescription))")
+            }
+            
+            completionHandler(success)
+        }
+    }
+    
+    private func scheduleLocalNotification(_ text: String, _ date: Date) {
+        // Create Notification Content
+        let notificationContent = UNMutableNotificationContent()
+        
+        // Configure Notification Content
+        notificationContent.title = "REMINDER APP"
+        notificationContent.subtitle = ""
+        notificationContent.body = text
+        
+        // Add Trigger
+        
+        let val = date.timeIntervalSinceNow - Date().timeIntervalSinceNow
+        if val > 0 {
+        let notificationTrigger = UNTimeIntervalNotificationTrigger(timeInterval: date.timeIntervalSinceNow, repeats: false)
+        
+        // Create Notification Request
+        let notificationRequest = UNNotificationRequest(identifier: "reminder_app_pelorca", content: notificationContent, trigger: notificationTrigger)
+        
+        // Add Request to User Notification Center
+        UNUserNotificationCenter.current().add(notificationRequest) { (error) in
+            if let error = error {
+                print("Unable to Add Notification Request (\(error), \(error.localizedDescription))")
+            }
+        }
+        }
+    }
+}
+
+
+
+extension TableViewController: UNUserNotificationCenterDelegate {
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert])
     }
     
 }
