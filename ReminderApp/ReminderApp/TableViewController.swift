@@ -15,6 +15,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
     
     public var row: Int = 0
     public var listReminder = [Reminder]()
+    var searchBar: Bool = false
     public var listReminderOriginal = [Reminder]()
     var indexPath: IndexPath?
     var tapGesture: Any?
@@ -73,10 +74,14 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
         self.tableView.reloadData()
     }
     
+    
+    
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let text = listReminder[indexPath.row].texto
-             listReminderOriginal = listReminderOriginal.filter{ $0.texto != text}
+            if searchBar {
+                listReminderOriginal = listReminderOriginal.filter{ $0.texto != text}
+            }
             if listReminderOriginal.count == 1 {
                 self.listReminder.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
@@ -86,17 +91,22 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
             } else {
                 self.listReminder.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
+                if !searchBar {
+                listReminderOriginal = listReminder
+                }
             }
             
         }
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+       
         if searchText.isEmpty {
             listReminder = listReminderOriginal
+             self.searchBar = false
             self.tableView.reloadData()
         } else {
-            
+            self.searchBar = true
             let filtered = listReminderOriginal.filter{
                 let textToSearch = "\($0.texto)"
                 return textToSearch.range(of: searchText) != nil
