@@ -2,8 +2,8 @@
 //  TableViewController.swift
 //  ReminderApp
 //
-//  Created by Aloc SP08161 on 01/12/2017.
-//  Copyright © 2017 Aloc SP08161. All rights reserved.
+//  Created by Eduardo Pelorca on 01/12/2017.
+//  Copyright © 2017 Eduardo Pelorca. All rights reserved.
 //
 
 import UIKit
@@ -21,6 +21,16 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
     public var listReminderOriginal = [Reminder]()
     var indexPath: IndexPath?
     var tapGesture: Any?
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.tableView.reloadData()
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         listReminder.append(Reminder())
@@ -32,8 +42,13 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
         UNUserNotificationCenter.current().delegate = self
     }
     
+    //KEYBOARD TAP GESTURE
+    @objc func hideKeyboard() {
+        tableView.endEditing(true)
+    }
     
     
+    //NAVEGATION
     @objc func editButtonPressed(){
         self.tableView.setEditing(!tableView.isEditing, animated: true)
         if tableView.isEditing == true{
@@ -42,6 +57,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
             navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.editButtonPressed))
         }
     }
+    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "viewDetails"{
@@ -52,17 +68,8 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
     }
     
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.resignFirstResponder()
-    }
     
-    @objc func hideKeyboard() {
-        tableView.endEditing(true)
-    }
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        
-    }
+    //TABLE VIEW METHODS
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -71,12 +78,6 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return listReminder.count
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        self.tableView.reloadData()
-    }
-    
-    
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
@@ -100,24 +101,6 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
             
         }
     }
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        
-        if searchText.isEmpty {
-            listReminder = listReminderOriginal
-            self.searchBar = false
-            self.tableView.reloadData()
-        } else {
-            self.searchBar = true
-            let filtered = listReminderOriginal.filter{
-                let textToSearch = "\($0.texto)"
-                return textToSearch.range(of: searchText) != nil
-            }
-            listReminder = filtered
-        }
-        self.tableView.reloadData()
-    }
-    
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
@@ -149,12 +132,42 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
         return cell
     }
     
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        let cell = textField.superview?.superview as! TableViewCell
-        cell.isEditing = true
-        editingField = true
-        self.txtTexto = textField
-        self.tableView.addGestureRecognizer(tapGesture as! UIGestureRecognizer)
+    override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
+        if cell.txtTexto.text == "" {
+            editingField = false
+            listReminder.append(Reminder())
+            self.selectedItem = listReminder[listReminder.count - 1]
+            self.selectedItem?.texto = (self.txtTexto?.text)!
+            
+        } else {
+            editingField = true
+            self.selectedItem = listReminder[indexPath.row]
+        }
+        self.performSegue(withIdentifier: "viewDetails",  sender: selectedItem)
+    }
+    
+    
+    //SEARCH BAR METHODS
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        if searchText.isEmpty {
+            listReminder = listReminderOriginal
+            self.searchBar = false
+            self.tableView.reloadData()
+        } else {
+            self.searchBar = true
+            let filtered = listReminderOriginal.filter{
+                let textToSearch = "\($0.texto)"
+                return textToSearch.range(of: searchText) != nil
+            }
+            listReminder = filtered
+        }
+        self.tableView.reloadData()
     }
     
     
@@ -165,6 +178,19 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         self.tableView.removeGestureRecognizer(tapGesture as! UIGestureRecognizer)
     }
+    
+    
+    
+    //TEXT FIELD METHODS
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        let cell = textField.superview?.superview as! TableViewCell
+        cell.isEditing = true
+        editingField = true
+        self.txtTexto = textField
+        self.tableView.addGestureRecognizer(tapGesture as! UIGestureRecognizer)
+    }
+    
+    
     
     @objc func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
@@ -190,24 +216,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
     }
     
     
-    override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
-        if cell.txtTexto.text == "" {
-            editingField = false
-            listReminder.append(Reminder())
-            self.selectedItem = listReminder[listReminder.count - 1]
-            self.selectedItem?.texto = (self.txtTexto?.text)!
-            
-        } else {
-            editingField = true
-            self.selectedItem = listReminder[indexPath.row]
-        }
-        self.performSegue(withIdentifier: "viewDetails",  sender: selectedItem)
-    }
-    
-    
-    
-    
+    //NOTIFICATION METHODS
     public func Notification(_ text: String, _ date: Date?) {
         
         UNUserNotificationCenter.current().getNotificationSettings { (notificationSettings) in
@@ -267,7 +276,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
 }
 
 
-
+// EXTENSION FOR NOTIFICATION
 extension TableViewController: UNUserNotificationCenterDelegate {
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {

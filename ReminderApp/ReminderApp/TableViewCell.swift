@@ -2,8 +2,8 @@
 //  TableViewCell.swift
 //  ReminderApp
 //
-//  Created by Aloc SP08161 on 01/12/2017.
-//  Copyright © 2017 Aloc SP08161. All rights reserved.
+//  Created by Eduardo Pelorca on 01/12/2017.
+//  Copyright © 2017 Eduardo Pelorca. All rights reserved.
 //
 
 import UIKit
