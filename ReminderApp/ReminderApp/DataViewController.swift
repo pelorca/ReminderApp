@@ -27,6 +27,7 @@ class DataViewController: UIViewController {
         
         self.txtEvent.text = self.reminder?.texto
         self.dateEvent.date =  self.reminder?.date ?? Date()
+        self.isNotification.isOn = (self.reminder?.isNotification)!
         self.navigationItem.hidesBackButton = true
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.editButtonPressed))

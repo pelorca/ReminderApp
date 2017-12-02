@@ -138,7 +138,21 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
             cell.txtTexto.frame.origin.y = 0
         }
         cell.imgNotification.isHidden  = !listReminder[indexPath.row].isNotification
-        cell.backgroundColor = #colorLiteral(red: 1, green: 0.988355577, blue: 0.5284820596, alpha: 0.13)
+        cell.backgroundColor = #colorLiteral(red: 0.9995340705, green: 0.988355577, blue: 0.5284820596, alpha: 0.0780714897)
+        
+        cell.layer.shadowOffset = CGSize(width: 1, height: 1)
+        cell.layer.shadowColor = UIColor.lightGray.cgColor
+        cell.layer.shadowRadius = 4
+        cell.layer.shadowOpacity = 0.2
+        
+        // Maybe just me, but I had to add it to work:
+        cell.clipsToBounds = false
+        
+        let shadowFrame: CGRect = (cell.layer.bounds)
+        let shadowPath: CGPath = UIBezierPath(rect: shadowFrame).cgPath
+        cell.layer.shadowPath = shadowPath
+        
+        
         return cell
     }
     
@@ -202,6 +216,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
     
     @objc func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
+        self.tableView.removeGestureRecognizer(tapGesture as! UIGestureRecognizer)
         return true
     }
     
@@ -218,6 +233,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
             self.tableView.removeGestureRecognizer(tapGesture as! UIGestureRecognizer)
             self.tableView.reloadData()
         }else {
+            self.tableView.removeGestureRecognizer(tapGesture as! UIGestureRecognizer)
             if selectedItem != nil {
                 selectedItem?.texto = textField.text!
             }
