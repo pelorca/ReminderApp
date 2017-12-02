@@ -79,6 +79,19 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
         return listReminder.count
     }
     
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+      if (listReminder[indexPath.row].texto != "") {
+            return CGFloat(75)
+            
+        } else {
+            return CGFloat(50)
+            
+        }
+        
+        
+    }
+    
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let text = listReminder[indexPath.row].texto
@@ -112,8 +125,10 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
         
         if (listReminder[indexPath.row].texto != "") {
             cell.btnAdd.isHidden = true
+           
         } else {
             cell.btnAdd.isHidden = false
+          
         }
         cell.txtTexto?.autocorrectionType = UITextAutocorrectionType.no
         cell.txtTexto?.autocapitalizationType = UITextAutocapitalizationType.none
