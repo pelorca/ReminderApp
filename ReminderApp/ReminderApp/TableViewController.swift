@@ -14,6 +14,8 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
     var selectedItem: Reminder?
     
     public var row: Int = 0
+    var txtTexto: UITextField?
+    var editingField: Bool = false
     public var listReminder = [Reminder]()
     var searchBar: Bool = false
     public var listReminderOriginal = [Reminder]()
@@ -59,11 +61,11 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-      
+        
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-       return 1
+        return 1
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -86,13 +88,13 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
                 self.listReminder.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
                 self.listReminder.append(Reminder())
-                 tableView.reloadData()
+                tableView.reloadData()
                 listReminderOriginal = listReminder
             } else {
                 self.listReminder.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
                 if !searchBar {
-                listReminderOriginal = listReminder
+                    listReminderOriginal = listReminder
                 }
             }
             
@@ -100,10 +102,10 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-       
+        
         if searchText.isEmpty {
             listReminder = listReminderOriginal
-             self.searchBar = false
+            self.searchBar = false
             self.tableView.reloadData()
         } else {
             self.searchBar = true
@@ -150,6 +152,8 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
     func textFieldDidBeginEditing(_ textField: UITextField) {
         let cell = textField.superview?.superview as! TableViewCell
         cell.isEditing = true
+        editingField = true
+        self.txtTexto = textField
         self.tableView.addGestureRecognizer(tapGesture as! UIGestureRecognizer)
     }
     
@@ -162,35 +166,49 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
         self.tableView.removeGestureRecognizer(tapGesture as! UIGestureRecognizer)
     }
     
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        
-        let cell = textField.superview?.superview as! TableViewCell
-        if !cell.btnAdd.isHidden && textField.text != "" {
-            listReminder.append(Reminder(textField.text!,nil, false))
-            listReminderOriginal = listReminder
-        }
-        self.tableView.keyboardDismissMode = .none
-        self.tableView.removeGestureRecognizer(tapGesture as! UIGestureRecognizer)
-        self.tableView.reloadData()
-    }
-
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {           textField.resignFirstResponder()
+    @objc func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
         return true
     }
     
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        
+        if editingField {
+            let cell = textField.superview?.superview as! TableViewCell
+            cell.txtTexto.text = textField.text
+            if !cell.btnAdd.isHidden && textField.text != "" {
+                if selectedItem != nil {
+                    selectedItem?.texto = textField.text!
+                }
+                listReminder.append(Reminder(textField.text!,nil, false))
+                listReminderOriginal = listReminder
+            }
+            self.tableView.keyboardDismissMode = .none
+            self.tableView.removeGestureRecognizer(tapGesture as! UIGestureRecognizer)
+            self.tableView.reloadData()
+        }
+    }
+    
+    
     override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        let filtered = listReminder.filter{ $0.date == nil && $0.texto == ""}
-        if filtered.count == 1 && listReminder.count == 1 {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
+        if cell.txtTexto.text == "" {
+            editingField = false
             listReminder.append(Reminder())
             self.selectedItem = listReminder[listReminder.count - 1]
+            self.selectedItem?.texto = (self.txtTexto?.text)!
             
         } else {
+            editingField = true
             self.selectedItem = listReminder[indexPath.row]
         }
         self.performSegue(withIdentifier: "viewDetails",  sender: selectedItem)
     }
     
-   public func Notification(_ text: String, _ date: Date?) {
+    
+    
+    
+    public func Notification(_ text: String, _ date: Date?) {
         
         UNUserNotificationCenter.current().getNotificationSettings { (notificationSettings) in
             switch notificationSettings.authorizationStatus {
@@ -227,22 +245,23 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
         notificationContent.title = "REMINDER APP"
         notificationContent.subtitle = ""
         notificationContent.body = text
+        notificationContent.sound = UNNotificationSound.default()
         
         // Add Trigger
         
         let val = date.timeIntervalSinceNow - Date().timeIntervalSinceNow
         if val > 0 {
-        let notificationTrigger = UNTimeIntervalNotificationTrigger(timeInterval: date.timeIntervalSinceNow, repeats: false)
-        
-        // Create Notification Request
-        let notificationRequest = UNNotificationRequest(identifier: "reminder_app_pelorca", content: notificationContent, trigger: notificationTrigger)
-        
-        // Add Request to User Notification Center
-        UNUserNotificationCenter.current().add(notificationRequest) { (error) in
-            if let error = error {
-                print("Unable to Add Notification Request (\(error), \(error.localizedDescription))")
+            let notificationTrigger = UNTimeIntervalNotificationTrigger(timeInterval: date.timeIntervalSinceNow, repeats: false)
+            
+            // Create Notification Request
+            let notificationRequest = UNNotificationRequest(identifier: "reminder_app_pelorca", content: notificationContent, trigger: notificationTrigger)
+            
+            // Add Request to User Notification Center
+            UNUserNotificationCenter.current().add(notificationRequest) { (error) in
+                if let error = error {
+                    print("Unable to Add Notification Request (\(error), \(error.localizedDescription))")
+                }
             }
-        }
         }
     }
 }

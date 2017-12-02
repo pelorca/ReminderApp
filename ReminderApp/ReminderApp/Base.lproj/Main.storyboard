@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Riminder-->
+        <!--REMINDER APP-->
         <scene sceneID="eB3-pV-MsT">
             <objects>
                 <tableViewController id="cOV-aB-P20" customClass="TableViewController" customModule="ReminderApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -80,7 +80,7 @@
                             <outlet property="delegate" destination="cOV-aB-P20" id="FZS-lZ-cUI"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Riminder" id="M1X-Qr-LEc"/>
+                    <navigationItem key="navigationItem" title="REMINDER APP" id="M1X-Qr-LEc"/>
                     <connections>
                         <segue destination="e6R-Ss-4bj" kind="show" identifier="viewDetails" id="RcK-BD-hdi"/>
                     </connections>
