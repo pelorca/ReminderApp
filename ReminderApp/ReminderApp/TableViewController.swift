@@ -40,6 +40,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.editButtonPressed))
         tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.hideKeyboard))
         UNUserNotificationCenter.current().delegate = self
+    
     }
     
     //KEYBOARD TAP GESTURE
@@ -81,15 +82,11 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-      if (listReminder[indexPath.row].texto != "") {
+      if (listReminder[indexPath.row].texto != "" && listReminder[indexPath.row].date != nil) {
             return CGFloat(75)
-            
         } else {
             return CGFloat(50)
-            
         }
-        
-        
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
@@ -142,21 +139,17 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
         }
         cell.imgNotification.isHidden  = !listReminder[indexPath.row].isNotification
         cell.backgroundColor = #colorLiteral(red: 1, green: 0.988355577, blue: 0.5284820596, alpha: 0.13)
-        
-        
         return cell
     }
     
     override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
-        if cell.txtTexto.text == "" {
-            editingField = false
+        editingField = false
+       if self.txtTexto?.text == "" {
             listReminder.append(Reminder())
             self.selectedItem = listReminder[listReminder.count - 1]
             self.selectedItem?.texto = (self.txtTexto?.text)!
             
         } else {
-            editingField = true
             self.selectedItem = listReminder[indexPath.row]
         }
         self.performSegue(withIdentifier: "viewDetails",  sender: selectedItem)
@@ -177,8 +170,8 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
         } else {
             self.searchBar = true
             let filtered = listReminderOriginal.filter{
-                let textToSearch = "\($0.texto)"
-                return textToSearch.range(of: searchText) != nil
+                let textToSearch = "\($0.texto.uppercased())"
+                return textToSearch.range(of: searchText.uppercased()) != nil
             }
             listReminder = filtered
         }
@@ -216,17 +209,18 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
         
         if editingField {
             let cell = textField.superview?.superview as! TableViewCell
-            cell.txtTexto.text = textField.text
             if !cell.btnAdd.isHidden && textField.text != "" {
-                if selectedItem != nil {
-                    selectedItem?.texto = textField.text!
-                }
+                
                 listReminder.append(Reminder(textField.text!,nil, false))
                 listReminderOriginal = listReminder
             }
             self.tableView.keyboardDismissMode = .none
             self.tableView.removeGestureRecognizer(tapGesture as! UIGestureRecognizer)
             self.tableView.reloadData()
+        }else {
+            if selectedItem != nil {
+                selectedItem?.texto = textField.text!
+            }
         }
     }
     
