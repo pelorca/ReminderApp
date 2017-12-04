@@ -164,7 +164,11 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
             self.selectedItem?.texto = (self.txtTexto?.text)!
             
         } else {
+          if listReminder.count == 1 {
+                listReminder.append(Reminder())
+            }
             self.selectedItem = listReminder[indexPath.row]
+            self.selectedItem?.texto = (self.txtTexto?.text)!
         }
         self.performSegue(withIdentifier: "viewDetails",  sender: selectedItem)
     }
@@ -289,6 +293,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
             
             // Create Notification Request
             let notificationRequest = UNNotificationRequest(identifier: "reminder_app_pelorca", content: notificationContent, trigger: notificationTrigger)
+            
             
             // Add Request to User Notification Center
             UNUserNotificationCenter.current().add(notificationRequest) { (error) in
