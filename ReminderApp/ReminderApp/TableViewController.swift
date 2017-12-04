@@ -40,6 +40,7 @@ class TableViewController: UITableViewController, UITextFieldDelegate, UISearchB
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.editButtonPressed))
         tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.hideKeyboard))
         UNUserNotificationCenter.current().delegate = self
+       
     
     }
     
